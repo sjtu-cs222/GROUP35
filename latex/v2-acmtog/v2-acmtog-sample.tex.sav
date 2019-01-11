@@ -1,0 +1,554 @@
+% v2-acmtog-sample.tex, dated March 7 2012
+% This is a sample file for ACM Transactions on Graphics
+%
+% Compilation using 'acmtog.cls' - version 1.2 (March 2012), Aptara Inc.
+% (c) 2010 Association for Computing Machinery (ACM)
+%
+% Questions/Suggestions/Feedback should be addressed to => "acmtexsupport@aptaracorp.com".
+% Users can also go through the FAQs available on the journal's submission webpage.
+%
+% Steps to compile: latex, bibtex, latex latex
+%
+% For tracking purposes => this is v1.2 - March 2012
+\documentclass{acmtog} % V1.2
+
+%\acmVolume{VV}
+%\acmNumber{N}
+%\acmYear{YYYY}
+%\acmMonth{Month}
+%\acmArticleNum{XXX}
+%\acmdoi{10.1145/XXXXXXX.YYYYYYY}
+
+\acmVolume{28}
+\acmNumber{4}
+\acmYear{2009}
+\acmMonth{September}
+\acmArticleNum{106}
+\acmdoi{10.1145/1559755.1559763}
+
+\begin{document}
+
+\title{Approximate Convolutional network for image classifier} % title
+
+\author{XINYUAN LU {\upshape and} YUXUAN JIANG
+\affil{Shanghai Jiao Tong University}}
+
+
+
+\maketitle
+
+
+
+\begin{abstract}
+We introduce a physiologically-based model for pupil light reflex (PLR)
+and an image-based model for iridal pattern deformation. Our PLR model
+expresses the pupil diameter as a function of the lighting of the
+environment, and is described by a delay-differential equation,
+naturally adapting the pupil diameter even to abrupt changes in light
+conditions. Since the parameters of our PLR model were derived from
+measured data, it correctly simulates the actual behavior of the human
+pupil. Another contribution of our work is a model for realistic
+deformation of the iris pattern as a function of pupil dilation and
+constriction. Our models produce high-fidelity appearance effects and
+can be used to produce real-time predictive animations of the pupil and
+iris under variable lighting conditions. We assess the predictability
+and quality of our simulations through comparisons of modeled results
+against measured data derived from experiments also described in this
+work. Combined, our models can bring facial animation to new
+photorealistic standards. Another contribution of our work is a model
+for realistic deformation of the iris pattern as a function of pupil
+dilation and constriction. Another contribution of our work is a model
+for realistic deformation of the iris pattern as a function of pupil
+dilation and constriction. Another contribution of our work is a model
+for realistic deformation of the iris pattern as a function of pupil
+dilation and constriction.
+\end{abstract}
+
+\section{Introduction}
+
+\looseness-1Nowadays, more and more convolutional network models are proposed to get more representative features, such as densenet and resnet. And the deeper network is, the more powerful it is. But there is an phenomenon that different image actually do not need same depth to get feature map. Take image classify for example. Image would be thought ¡°hard¡± or ¡°easy¡± , just like red wine in figure.1. And easy image can be classified correctly through shallow network, while hard ones need deep. It is wasteful to pass all images though whole deep net. So we consider an architecture not only saving resource(especially time), but also guarantee accuracy.
+
+We are inspired by , actually the architecture they proposed has obvious drawbacks. But the idea is excellent: create a gate function to judge when one image can be considered extracted enough, and then the result can be returned as final result. Then we use new architecture MSDnet. we try the traditional gate function on MSDnet, but it work badly. And we proposed one new formulation of gate function. Then we set up our new hybrid architecture. It performs well in the CIFAR-10.
+
+Furthermore, we utilize gate function on other architecture and find it also make contribution to ¡°mismatch¡±. It is an phenomenon some easy image can be classified by shallow net but can't by deep net.
+
+
+\begin{figure}
+  \centering
+  % Requires \usepackage{graphicx}
+  \includegraphics[scale=0.8]{C:/Users/dell/Downloads/v2-acmtog/1.png}
+  \caption{1}
+\end{figure}
+
+\section{Background and Motivation}
+
+%
+\looseness-1As we describe in the introduction, we notice that resnet18 can get about 91 accuracy in CIFAR-10. Resnet-110 can get 93 while spend almost three times of time. That means, there are many images do not need deep network. 
+
+So we come up with an idea to find a way to judge whether one image need to go through deep network. Easy would pass through shallow net to save time, hard image pass deep net to guarantee accuracy. It is similar idea with traditional approximate computing.
+
+And the difference is, we do not have a precise answer. However deep our network is, we can not guarantee it can predict all test set correctly. We only have a high-accuracy model designed regardless of consideration of resource.
+
+
+
+\section{Relative work}
+We mentioned that proposed two ways to try. But they all have drawbacks.
+
+Left one: an adaptive network selection method, takes a set of pre-trained DNNs, each with a different cost and accuracy trade-off, and arranges them in a directed acyclic graph ,with the cheapest model ?rst and the most expensive one last. After each model, our gate function would judge whether it can return or should jump to more complex model. Its drawback is Hard pictures may go though too much network and cost a lot of resource. And it is waste to extract features again and again
+
+
+Right one is  an adaptive early-exit strategy that allows easy examples to bypass some of the network¡¯s layers.But early layer are lack of coarse-level features.So it can't predict well. Also, in training, our cost function would be sum of all classifiers. And early classi?ers interfere with later classi?ers. To make early layers to have a better prediction, early layer would be modified to have a better ability of compressing image, while information loses.
+
+So we turn to another architecture $MSDnet$. This architecture designed to get a good result at any limitation of resource. We find it useful to do approximate classifier. Figure 3 is its architecture. It use Multi-scale feature maps. The feature maps at a particular layer and scale are computed by concatenating the results of one or two convolutions: 1. the result of a regular convolution applied on the same-scale features from the previous layer (horizontal connections) and, if possible, 2. the result of a strided convolution applied on the ?ner-scale feature map from the previous layer (diagonal connections). So the early classifier would also perform well. What¡¯s more, if an earlier layer collapses information to generate short-term features, the lost information can be recovered through the direct connection to its preceding layer by using Dense connectivity.
+
+
+
+
+
+
+\begin{figure*}
+  \centering
+  % Requires \usepackage{graphicx}
+  \includegraphics[scale=0.5]{C:/Users/dell/Downloads/v2-acmtog/2.png}
+  \caption{2}\label{two architecuture}
+\end{figure*}
+
+
+
+\begin{figure*}
+  \centering
+  % Requires \usepackage{graphicx}
+  \includegraphics[scale=0.5]{C:/Users/dell/Downloads/v2-acmtog/3.png}
+  \caption{MSDnet}\label{}
+\end{figure*}
+
+\section{Problem Formulation}
+\label{sub:models_of_pupil_dynamics}
+Given a input image x, we have some pre-trained models,$f_0,f_1,f_2...$, to utilize for a prediction.Where, the model, $f_0$,,is a high prediction-cost(HPC) model, which is either a priori known, or which we train to high-accuracy regardless of cost considerations. We would like to learn some alternative low prediction-cost (LPC) model $f_1,f_2,f_3$¡­. They have different cost and different accuracy. Notice in MSDnet, LPC are different part of HPC.
+
+Then we propose a gate function $h(x)$, it would tell us how "hard" x is.So the total cost of x is:
+\begin{eqnarray*}
+  C_{total}(x) = C_f(x) + C_h(x)
+\end{eqnarray*}   
+
+We can't define the precise formulation of $C_f$ and $C_h$, it would change with change of formulation of $h(x)$. And the total cost of all the test set is:
+
+\begin{eqnarray*}
+  C_{all}=\sum_{x}{C_{total}(x)}+\gamma * E 
+\end{eqnarray*} 
+
+Where $E$ is the error rate of all testset, and $\gamma$ is the hyperparameter to balance the tradeoff between accuracy and cost.
+
+Our goal is to minimize $C_{all}$
+
+\section{The Proposed Method}
+\label{sec:proposed_model}
+
+
+
+\subsection{The PLR Model Validation}
+\label{sec:PLRValidation}
+%
+Actually, what we should do is to formulate a good function $h$. And we first pretrain a MSDnet in trainset. And then we tried 
+
+\subsubsection{The Flashlight Experiments}
+\label{sec:first_flashlightExperiment}
+
+In these experiments, we used a light source to induce significant
+changes in the subjects' pupil diameters without introducing
+considerable changes in the lighting conditions of the environment. For
+this purpose, we used a small flashlight powered by a single AAA battery
+(1.5 Volt) kept at about 20cm from the subject's right eye and pointed
+at it. Given the small area illuminated by the flashlight as well as its
+reduced power, the readings from the lux meter were very sensitive to
+even small changes in the relative position and orientation of the
+flashlight with respect to lux meter sensor. Thus, we decided to run two
+simulations using the recorded data: (1) considering the light intensity
+estimated using Equation~(\ref{eq:moon}), and (2) considering the
+readings from the lux meter. These two experiments are explained next.
+
+In this experiment, we used the Moon and Spencer equation
+(Equation~(\ref{eq:moon})) to solve for the light intensities during the
+{on} and {off} states of the flashlight, based on the measured pupil
+diameters (from the video). Since the Moon and Spencer function (curve
+$C_m$ in Figure~3) represents the pupil behavior of an average
+individual, we estimated the {on} ({off}) light intensity as the average
+of the computed {on} ({off}) intensities for both subjects. Using this
+procedure, we obtained estimates of $10^{1.1}$~blondels when the
+flashlight was on, and $10^{-0.5}$~blondels when the flashlight was off.
+Given the average luminance value for the {on} ({off}) state and the
+{corresponding} pupil diameter for a given subject, we used
+Equation~(\ref{eq:isocurve}) to estimate the $r_{I_{on}}$
+($r_{I_{off}}$) index for that subject. The subject's final $r_I$ index
+was computed as the average between his \smash{$r_{I_{on}}$} and
+\smash{$r_{I_{off}}$} indices. Using this procedure, we obtained $r_I =
+0.4$ for the green-eye subject and $r_I = 0.03$ for the blue-eye
+subject.
+
+Figure~6 shows the actual pupil diameter measurements performed on a
+frame-by-frame basis along 9-second-long sequences captured for each
+subject. The green ``+" marks on top represent the measurements for the
+green-eye subject, while the blue ``x" marks show the measurements of
+the blue-eye subject. This example illustrates the intersubject
+variability in terms of light sensitivity and shows the ability of our
+model to appropriately represent such individual differences. The
+vertical dotted lines delimit the intervals in which the flashlight was
+kept on and off for each subject.
+%Note that the duration of these intervals varied as the video sequences were acquired.
+The solid and dashed lines represent the simulated results produced by
+our model for the green-eye and blue-eye subjects, respectively, and
+closely agree with the actual measured values. These curves were
+produced automatically from Equations~(16) and~(\ref{eq:isocurve}), on
+top of which we added small random variations (hippus effect) as
+described in the previous section. The accompanying video shows
+side-by-side comparisons of our simulated results and videos captured
+for the two subjects.
+
+\paragraph{The second flashlight experiment}
+In this experiment, we used the readings provided by the lux meter for
+the {on} and {off} states of the flashlight. These illuminance values
+were 350lux\footnote{$1~{{lux}} = 1~{{lumen}} /m^2$.} and 90lux,
+respectively. One should recall that in such a setup, small changes in
+the position and orientation of the subject's head produce changes in
+the illuminance at the pupil. Therefore, these values are only
+approximations to the actual illuminance reaching each subject's lit
+eye. Given the illuminance values and the subjects' corresponding pupil
+diameters estimated from the video frames, we obtained the actual
+pupil's luminous flux (in lumens) at the two flashlight states, for each
+individual. These values were then converted to blondels according to
+the assumption described in Section~\ref{subsec:EquilibriumCase}. We
+then used Equations~(16) and~(\ref{eq:isocurve}) to estimate their
+corresponding $r_I$ indices (by averaging \smash{$r_{I_{on}}$} and
+\smash{$r_{I_{off}}$}), obtaining $r_I = 0.54$ for the blue-eye subject
+and $r_I = 0.92$ for the green-eye subject. Figure~7 compares the actual
+pupil measurements (same as in Figure~6) with the results simulated by
+our model using the lux meter readings as input. The differences between
+the simulated curves shown in Figures~6 and 7 are primarily due to the
+added random noise (hippus).
+
+
+\subsubsection{The 100-Watt Lightbulb Experiment}
+\label{sec:luxMeterExperiment}
+For this experiment we used a more stable light source to induce pupil
+constriction: a spot with a 100-watt incandescent white lightbulb, kept
+at about one meter in front and one meter to the right of the subject's
+head. This setup allowed the subjects to remain comfortable with their
+eyes opened while the light was on.
+
+We measured the environment light intensity during the {on} and {off}
+states by positioning the digital lux meter at approximately the same
+position and orientation as the subject's right eye. During the blue-eye
+subject experiment, we found the illuminance to be equal to $140$ lux
+when the light was off and $315$ lux when it was on. During the
+green-eye subject experiment, the readings were $91$ and $540$ lux,
+respectively. These differences resulted from a darker environment and a
+slight approximation of the green-eye subject to the light source.
+Again, we used the illuminance values and the subjects' corresponding
+pupil diameters (measured from the video) as input to Equations~(16)
+and~(\ref{eq:isocurve}) to estimate their corresponding $r_I$ indices
+(by averaging $r_{I_{on}}$ and $r_{I_{off}}$). We obtained $r_I = 0.9$
+for the blue-eye subject and $r_I = 1.0$ for the green-eye subject.
+
+Figure~8 (top) shows the actual pupil diameter measurements performed on
+a frame-by-frame basis along 56- and 50-second-long sequences captured
+for the blue-eye and for the green-eye subjects, respectively. The
+vertical lines delimit the intervals in which the light was kept {on}
+and {off} for each subject. The solid and dashed lines represent the
+simulated results produced automatically by our model (Equations~16
+and~\ref{eq:isocurve}) with and without hippus, respectively, and
+closely agree with the actual measurements. Figure~8 (bottom) shows
+zoomed versions of portions of the graphs shown on top, exhibiting
+{off-on-off} transitions.
+
+One should note that the simulated results produced by our PLR model
+closely approximate the actual behaviors of the subjects' pupils in all
+three experiments, illustrating the effectiveness of our model. The
+differences in the $r_I$ indices for a given subject among the
+experiments can be explained as follows.
+\begin{itemize}
+\item In the two flashlight experiments, the pupil diameters used for
+the {on} and {off} states were the same, but the illuminance values
+provided by Equation~\ref{eq:moon} and by the lux meter were different.
+The different indices simply reflect the different light sensitivities
+presented to our model as input.
+\item When comparing the 100-watt lightbulb and the flashlight
+experiments, both the lighting and the pupil sizes varied for the {on}
+and {off} states of the light sources. For instance, for the green-eye
+subject, the pupil diameters were approximately 4.3mm and 5.7mm for the
+{on} and {off} states of the flashlight, respectively (Figure~7). This
+resulted in an $r_I$ index of 0.92. In the case of the 100-watt
+lightbulb experiment, these values were approximately 4.3mm and 6.0mm,
+respectively (Figure~8), with $r_I = 1.0$. These two indices are
+relatively close and reflect the difference in the maximum pupil
+diameters between the two experiments. The difference in the $r_I$
+indices for the blue-eye subject were considerably larger, from 0.54 to
+0.9. Again, this can be explained by comparing the measured pupil
+diameters in the two experiments. These values went from approximately
+3.2mm and 4.2mm in the {on} and {off} states of the flashlight
+(Figure~7) to 4.4mm and 5.2mm in the {on} and {off} states of the
+100-watt lightbulb (Figure~8).
+\end{itemize}
+An important point to note is that by using an average of the estimated
+$r_I$ indices for the {on} and {off} states of the light source, our
+model is capable of realistically simulating the pupil behavior of
+individuals with considerable differences in PLR responses under
+different and variable lighting conditions.
+
+\section{Modeling the Iris Deformation}
+\label{sec:patterndeformations}
+
+Although the iris is a well-known structure, there is no general
+agreement about a model of its behavior. He suggested that the collagen
+fibers are arranged in a series of parallel arcs, connecting the iris
+root with the pupil border, clockwise and counterclockwise in an angle
+of 90 degrees oriented by the center of the pupil. These fibers would be
+interwoven with other iris components, such as blood vessels. Based on
+Rohen's fiber arrangement, Wyatt proposed a 2D nonlinear model for iris
+deformation. Such a model has been validated on canine, porcine, and
+monkey irises, but so far not on human irises~[Wyatt private
+communication].
+
+Figure~9 (right) shows how the positions of the individually tracked
+iridal feature points changed along the dilation process. The
+trajectories of the points both on the pupillary and ciliary zones move
+on approximately radial paths. Although some imprecision in the exact
+location of the points might have resulted from the manual
+specification, most of the deviation from the radial paths result from
+the existence of blood vessels under the iris, and from crypts, and
+folds (the iris folds its tissue as a result of pupil dilation) that
+prevent iris points from always moving along radial lines. Such
+structures vary considerably among individuals but, according to our
+experience, their influence on the paths of the feature points usually
+has small magnitude (Figure~9 right). Therefore, as a first
+approximation, we can assume that the iris points move along straight
+lines in the radial directions. It is worth noting that\break Wyatt's 2D
+model does not take the influence of these structures into account
+either.
+
+In order to find how fast the feature points moved, we computed the
+following measures during the dilation process: (1) the distance from
+the tracked feature point to the pupil center; (2) the distance from the
+tracked feature point to the pupil border; and (3) the ratio between the
+distance from the tracked point to the pupil border and the local width
+of the iridal disk (the distance from the pupil border to the external
+iris border measured along the radial segment passing through the
+feature point). One should recall that the pupil is not necessarily
+circular and that its center does not necessarily coincide with the
+center of the iris. While measurements (1) and (2) presented a pretty
+much linear behavior, the ratio represented by (3) was approximately
+constant for all feature points (Figure~10 right). The same behavior was
+observed in the irises of all five volunteers. Like the variations in
+the trajectories of the points shown in Figure~9 (right), the deviations
+from horizontal lines in Figure~10 (right) are caused by the subjects'
+iris structures, specially the iridal folds. Again, as a first
+approximation, the following ratio can be assumed constant for any
+iridal point $p_i$, for all values of pupil diameters:
+\begin{equation}
+\rho_i = \frac{\|p_i - c_i\|}{\|E_i - c_i\|},
+\label{eq:invariance_iris_deformation}
+\end{equation}
+where $p_i$ is a point on the iris disk, $c_i$ and $E_i$ are the points
+on the pupil border and on the iris outer circle, respectively, such
+that they are collinear to the radial segment passing through $p_i$.
+$\|.\|$ is the $L^2$ (Euclidean) norm. The invariance expressed by
+Equation~\ref{eq:invariance_iris_deformation} summarizes the
+observations illustrated in Figure~10 (right) and is the basis of our
+image-based model for iridal pattern deformation.
+
+%
+\subsection{Animating the Deformed Iridal Patterns}
+\label{sec:iris_animation}
+%
+As an approximation to the behaviors depicted in Figures~9 (right) and
+10 (right), we use texture mapping to animate the iris deformation
+process. Note that this is a natural and efficient way of implementing
+the behavior modeled by Equation~(\ref{eq:invariance_iris_deformation}):
+as the pupil dilates/constricts, the iris ring is compressed/stretched,
+but the parameterization (in the $[0,1] \times [0,1]$ domain) of the
+points inside the ring remains the same. Thus, for animation purposes,
+we model the iris as a planar triangle-strip mesh on the disk defined by
+the two circles %(Figure~\ref{fig:iris_mesh}) and use a photograph of an
+iris with a small pupil diameter as a texture. Texture coordinates map
+the border of the pupil to the inner circle of the mesh, and outer
+border of the iris to the mesh's outer circle. Currently, we tessellate
+the mesh creating a pair of triangles at every five degrees. The
+animation proceeds by computing the new pupil diameter $D$ as a function
+of the incident lighting using Equation~(\ref{eq:isocurve}). We then
+reposition each vertex $v_i$, located on the inner circle of the mesh,
+at a distance $D/2$ along the radial line connecting the center of the
+pupil to $v_i$, while keeping their original texture coordinates
+unchanged. One should recall that the center of the pupil does not
+necessarily match the center of the iris, and thus, it is important to
+keep the coordinates of the center of the pupil. Figure~8 shows the
+renderings of an iris created using our models for different lighting
+conditions. Note that the patterns deform in a natural way. No light
+reflection on a corneal surface has been simulated, to avoid masking
+iris details.
+
+
+\section{Discussion}
+\label{sec:results}
+
+We have implemented the proposed models and used them to render
+synthetic images of the human iris and pupil. The resulting animations
+are very convincing and run in real time. We have compared the images
+produced by our models with photographs and videos of real human irises.
+The results produced by our models are in qualitative agreement with
+observed behavior in humans.
+
+In order to demonstrate the potential use of the proposed models in
+computer graphics, we built an application that renders a human head
+model in an environment illuminated by HDR cube maps (see accompanying
+video). The head model was obtained and its original irises were
+replaced by our textured triangle-strip model. The HDR images were
+obtained from Paul Debevec's web site and are used to approximate the
+environment's radiance. As the head looks at different parts of the
+environment, its pupil diameters adapt to the irradiance in the solid
+angle defined by its field of view, producing pleasing animation
+effects.
+
+Accommodation and age affect the pupil diameter and iris color
+influences some PLR parameters, such as {maximum} pupil diameter,
+latency, and constriction velocity. These aspects are currently not
+taken into account by our model because of the lack of reliable data
+over a large range of lighting conditions. For instance, discuss the
+effect of age on the size of the pupil. Their study, however, only
+considered luminance values from $10^1$ to $10^4$ blondels, which
+corresponds to only about 30\% of the luminance range used by our model.
+Currently, we model variations in pupil diameters for the same light
+stimulus using Equation~\ref{eq:isocurve}, which can be used to simulate
+the age-related miosis effect reported by Winn. Also, since our model
+covers the entire range of valid pupil diameter values, it safely covers
+the pupillary sizes resulting from influence of attentional and other
+cognitive factors. Extending our model to handle other phenomena based
+on biophysical parameters is an interesting direction for future work.
+
+No relief data representing the iris folds are used in the current
+version of the model, as it is done in the technique presented by. Also,
+no corneal refraction is used. Thus, at grazing angles, in addition to
+the distortion resulting from pupil dilation/constriction, one would
+perceive the projective distortion due to texture mapping. Relief
+information could be added to our model in a straightforward way,
+allowing some interesting shading effects such as projected shadows and
+self-occlusions.
+
+We use a linear model for iridal pattern deformation even though the
+actual deformation is nonlinear. However, such nonlinearity contributes
+approximately only 1\% of the diameter of a typical iris (12.0mm). Most
+of the nonlinear behavior seen in Figure~9 (right) and Figure~10 (right)
+is due to the interference of folds and blood vessels, which varies
+among individuals. To the best of our knowledge, no model in the
+literature takes those factors into account.
+
+Many other factors affect pupil size, including particular states of
+mind, such as interest and curiosity, spectral sensitivity, respiratory
+and heart rate, and spatial patterns in the visual field. Taking all
+these aspects into account seems to be impractical due to their inherent
+complexity and limited supporting data. We should emphasize that PLR
+causes the single most noticeable involuntary movements of the pupil. As
+the graphs depicted in Figures~7 and 8 and the accompanying video show,
+our PLR model alone can produce predictable animations of the pupil
+dynamics.
+
+\section{Conclusion}
+\label{sec:conclusion}
+%
+We have presented new models for realistic renderings of the human iris
+and pupil. Our physiologically-based model of the pupil light reflex
+combines and extends theoretical results from the Mathematical Biology
+field with experimental data collected by several researchers. The
+resulting model is expressed in terms of a nonlinear delay-differential
+equation that describes the changes in the pupil diameter as function of
+the environment lighting. Our model is also original in the sense that
+it can simulate individual differences with respect to light
+sensitivity. As all parameters of our models were derived from
+experimental data, they correctly simulate the actual behavior of the
+human iris and pupil. They also produce high-fidelity appearance
+effects, which can be used to create\break real-time predictive
+animations of the pupil and iris under variable lighting conditions. We
+have validated our models through comparisons of our simulated results
+against videos and photographs captured from human irises. The quality
+of these simulations qualitatively matched the actual behaviors of human
+pupils and irises.
+
+To the best of our knowledge, ours is the first physiologically-based
+model for simulating pupil light reflex presented in the graphics
+literature. It is also the first practical model (providing actual
+coefficient values) in the literature for simulating the dynamics of
+pupil and iris under variable lighting conditions, and the first
+integrated model in all of the literature to consider individual
+variability in pupil diameter using general equations for latency and
+velocity. Our image-based model for iridal pattern deformation is also
+the first model of its kind in the graphics literature.\vskip21pt
+
+% Start of "Sample References" section
+
+\section{Typical references in new ACM Reference Format}
+A paginated journal article \cite{Abril07}, an enumerated
+journal article \cite{Cohen07}, a reference to an entire issue \cite{JCohen96},
+a monograph (whole book) \cite{Kosiur01}, a monograph/whole book in a series (see 2a in spec. document)
+\cite{Harel79}, a divisible-book such as an anthology or compilation \cite{Editor00}
+followed by the same example, however we only output the series if the volume number is given
+\cite{Editor00a} (so Editor00a's series should NOT be present since it has no vol. no.),
+a chapter in a divisible book \cite{Spector90}, a chapter in a divisible book
+in a series \cite{Douglass98}, a multi-volume work as book \cite{Knuth97},
+an article in a proceedings (of a conference, symposium, workshop for example)
+(paginated proceedings article) \cite{Andler79}, a proceedings article
+with all possible elements \cite{Smith10}, an example of an enumerated
+proceedings article \cite{VanGundy07},
+an informally published work \cite{Harel78}, a doctoral dissertation \cite{Clarkson85},
+a master's thesis: \cite{anisi03}, an online document / world wide web resource \cite{Thornburg01}, \cite{Ablamowicz07},
+\cite{Poker06}, a video game (Case 1) \cite{Obama08} and (Case 2) \cite{Novak03}
+and \cite{Lee05} and (Case 3) a patent \cite{JoeScientist001},
+work accepted for publication \cite{rous08}, 'YYYYb'-test for prolific author
+\cite{SaeediMEJ10} and \cite{SaeediJETC10}. Other cites might contain
+'duplicate' DOI and URLs (some SIAM articles) \cite{Kirschmer:2010:AEI:1958016.1958018}.
+Boris / Barbara Beeton: multi-volume works as books
+\cite{MR781536} and \cite{MR781537}.
+
+\appendix
+
+\section{Classical Multidimensional Scaling}
+\label{sec:cmds}
+
+Let $\mathrm{D}$ be an $n\times n$ matrix of pairwise distances. The
+matrix $D$ is symmetric with a zero diagonal. We are interested in
+finding a $d \times n$ matrix $\mathrm{X}$ where each column
+$\bm{x}_{i}$ is the representation of the point $i$ in $R^{d}$ and
+$\mathrm{D}_{ij} = \|\bm{x}_{i}-\bm{x}_{j}\|_{2}$. Denote the inner
+product (or Gram matrix) for this set of points by $\mathrm{K} =
+\mathrm{X}^{\top}\mathrm{X}$.
+
+
+$\mathrm{K}$ is an $n\times n$ symmetric positive semidefinite matrix.
+Let us now abuse notation and use $\mathrm{D}^{2}$ to indicate the
+matrix of squared pairwise distances $\mathrm{K} =
+-\frac{1}{2}(\mathrm{I} -
+\mathrm{1}\mathrm{1}^{\top})\mathrm{D}^{2}(\mathrm{I} -
+\mathrm{1}\mathrm{1}^{\top})$. Here, $\mathrm{I}$ is the $n \times n$
+identity matrix and $\mathrm{1}$ is the $n$-vector of all ones.
+
+\begin{acks}
+We are grateful to the following people for resources, discussions and
+suggestions: Prof. Jacobo Melamed Cattan (Ophthalmology-UFRGS), Prof.
+Roberto da Silva (UFRGS), Prof. Luis A. V. Carvalho (Optics-USP/SC),
+Prof. Anatolio Laschuk (UFRGS), Leandro Fernandes, Marcos
+Slomp, Leandro Lichtenfelz, Renato Silveira,
+Eduardo Gastal, and Denison Tavares. We also thank the volunteers who
+allowed us to collect pictures and videos of their irises: Alex Gimenes,
+Boris Starov, Christian Pagot, Claudio Menezes, Giovane Kuhn, Jo\~{a}o
+Paulo Gois, Leonardo Schmitz, Rodrigo Mendes, and Tiago Etiene.
+\end{acks}
+
+% Bibliography
+\bibliographystyle{ACM-Reference-Format-Journals}
+\bibliography{acmtog-sample-bibfile}
+                                % Sample .bib file with references that match those in
+                                % the 'Specifications Document (V1.5)' as well containing
+                                % 'legacy' bibs and bibs with 'alternate codings'.
+                                % Gerry Murray - March 2012
+
+\received{September 2008}{March 2009}
+
+\end{document}
+% End of v2-acmtog-sample.tex (March 2012) - Gerry Murray, ACM

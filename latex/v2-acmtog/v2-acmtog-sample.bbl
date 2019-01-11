@@ -1,0 +1,68 @@
+%%% -*-BibTeX-*-
+%%% Do NOT edit. File created by BibTeX with style
+%%% ACM-Reference-Format-Journals [18-Jan-2012].
+
+\begin{thebibliography}{00}
+
+%%% ====================================================================
+%%% NOTE TO THE USER: you can override these defaults by providing
+%%% customized versions of any of these macros before the \bibliography
+%%% command.  Each of them MUST provide its own final punctuation,
+%%% except for \shownote{}, \showDOI{}, and \showURL{}.  The latter two
+%%% do not use final punctuation, in order to avoid confusing it with
+%%% the Web address.
+%%%
+%%% To suppress output of a particular field, define its macro to expand
+%%% to an empty string, or better, \unskip, like this:
+%%%
+%%% \newcommand{\showDOI}[1]{\unskip}   % LaTeX syntax
+%%%
+%%% \def \showDOI #1{\unskip}           % plain TeX syntax
+%%%
+%%% ====================================================================
+
+\ifx \showCODEN    \undefined \def \showCODEN     #1{\unskip}     \fi
+\ifx \showDOI      \undefined \def \showDOI       #1{{\tt DOI:}\penalty0{#1}\ }
+  \fi
+\ifx \showISBNx    \undefined \def \showISBNx     #1{\unskip}     \fi
+\ifx \showISBNxiii \undefined \def \showISBNxiii  #1{\unskip}     \fi
+\ifx \showISSN     \undefined \def \showISSN      #1{\unskip}     \fi
+\ifx \showLCCN     \undefined \def \showLCCN      #1{\unskip}     \fi
+\ifx \shownote     \undefined \def \shownote      #1{#1}          \fi
+\ifx \showarticletitle \undefined \def \showarticletitle #1{#1}   \fi
+\ifx \showURL      \undefined \def \showURL       #1{#1}          \fi
+
+\bibitem[\protect\citeauthoryear{{Bolukbasi}, {Wang}, {Dekel}, and
+  {Saligrama}}{{Bolukbasi} et~al\mbox{.}}{2017}]%
+        {name1}
+{T. {Bolukbasi}}, {J. {Wang}}, {O. {Dekel}}, {and} {V. {Saligrama}}. 2017.
+\newblock \showarticletitle{{Adaptive Neural Networks for Efficient
+  Inference}}.
+\newblock {\em arXiv e-prints\/} (Feb. 2017).
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Huang, Chen, Li, Wu, van~der Maaten, and
+  Weinberger}{Huang et~al\mbox{.}}{2017}]%
+        {name2}
+{Gao Huang}, {Danlu Chen}, {Tianhong Li}, {Felix Wu}, {Laurens van~der Maaten},
+  {and} {Kilian~Q. Weinberger}. 2017.
+\newblock \showarticletitle{Multi-Scale Dense Networks for Resource Efficient
+  Image Classification}.
+\newblock {\em Proceedings of the 34th International Conference on Machine
+  Learning\/} {PMLR 70}, 527-536 (2017).
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{{Huang}, {Chen}, {Li}, {Wu}, {van der Maaten},
+  and {Weinberger}}{{Huang} et~al\mbox{.}}{2017}]%
+        {name3}
+{G. {Huang}}, {D. {Chen}}, {T. {Li}}, {F. {Wu}}, {L. {van der Maaten}}, {and}
+  {K.~Q. {Weinberger}}. 2017.
+\newblock \showarticletitle{{Multi-Scale Dense Networks for Resource Efficient
+  Image Classification}}.
+\newblock {\em arXiv e-prints\/} (March 2017).
+\newblock
+
+
+\end{thebibliography}
