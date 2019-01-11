@@ -12,7 +12,7 @@ import time
 device = torch.device('cuda:1')
 
 
-f=open('suppose_label_val.txt','r')
+f=open('suppose_label.txt','r')
 label_val=[]
 for k in f.readlines():
     label_val.append(int(k))
